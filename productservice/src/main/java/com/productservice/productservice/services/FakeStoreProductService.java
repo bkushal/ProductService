@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import com.productservice.productservice.dtos.FakeStoreProductDto;
@@ -29,8 +34,6 @@ public class FakeStoreProductService implements ProductService {
 		ResponseEntity<FakeStoreProductDto> responseEntity = 
 				restTemplate.getForEntity(this.specificProductUrl, FakeStoreProductDto.class, id);
 		
-		
-		
 		return this.convertToGenericProductDto(responseEntity.getBody());
 	}
 
@@ -50,8 +53,14 @@ public class FakeStoreProductService implements ProductService {
 	}
 
 	@Override
-	public void deleteProductById() {
+	public GenericProductDto deleteProductById(Long id) {
 		// TODO Auto-generated method stub
+		RestTemplate restTemplate = restTemplateBuilder.build();
+
+		RequestCallback requestCallback = restTemplate.acceptHeaderRequestCallback(FakeStoreProductDto.class);
+		ResponseExtractor<ResponseEntity<FakeStoreProductDto>> responseExtractor = restTemplate.responseEntityExtractor(FakeStoreProductDto.class);
+		ResponseEntity<FakeStoreProductDto> responseEntity = (restTemplate.execute(specificProductUrl, HttpMethod.DELETE, requestCallback, responseExtractor, id));
+		return this.convertToGenericProductDto(responseEntity.getBody());
 		
 	}
 

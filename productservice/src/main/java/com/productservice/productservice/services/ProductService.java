@@ -10,7 +10,7 @@ import com.productservice.productservice.dtos.GenericProductDto;
 public interface ProductService {
 	GenericProductDto getProductById(Long id);
 	List<GenericProductDto> getAllProducts();
-	void deleteProductById();
+	GenericProductDto deleteProductById(Long id);
 	GenericProductDto createProduct(GenericProductDto genericProductDto);
 	void updateProductById();
 	
