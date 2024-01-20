@@ -1,5 +1,8 @@
 package com.productservice.productservice.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,7 +15,8 @@ import com.productservice.productservice.dtos.GenericProductDto;
 public class FakeStoreProductService implements ProductService {
 	
 	private RestTemplateBuilder restTemplateBuilder;
-	private String getProductUrl = "https://fakestoreapi.com/products/1";
+	private String specificProductUrl = "https://fakestoreapi.com/products/{id}";
+	private String genericProductUrl = "https://fakestoreapi.com/products";
 	
 	FakeStoreProductService(RestTemplateBuilder restTemplateBuilder){
 		this.restTemplateBuilder = restTemplateBuilder;
@@ -23,7 +27,7 @@ public class FakeStoreProductService implements ProductService {
 		// TODO Auto-generated method stub
 		RestTemplate restTemplate = restTemplateBuilder.build();
 		ResponseEntity<FakeStoreProductDto> responseEntity = 
-				restTemplate.getForEntity(this.getProductUrl, FakeStoreProductDto.class);
+				restTemplate.getForEntity(this.specificProductUrl, FakeStoreProductDto.class, id);
 		
 		
 		
@@ -31,9 +35,18 @@ public class FakeStoreProductService implements ProductService {
 	}
 
 	@Override
-	public void getAllProducts() {
+	public List<GenericProductDto> getAllProducts() {
 		// TODO Auto-generated method stub
+		RestTemplate restTemplate = restTemplateBuilder.build();
+		ResponseEntity<FakeStoreProductDto[]> responseEntity = 
+				restTemplate.getForEntity(this.genericProductUrl, FakeStoreProductDto[].class);
 		
+		List<GenericProductDto> result = new ArrayList<>();
+		List<FakeStoreProductDto> fakeStoreProductDtos = List.of(responseEntity.getBody());
+		for(FakeStoreProductDto fakeStoreProductDto : fakeStoreProductDtos)
+				result.add(this.convertToGenericProductDto(fakeStoreProductDto));
+		
+		return result;
 	}
 
 	@Override
@@ -43,8 +56,12 @@ public class FakeStoreProductService implements ProductService {
 	}
 
 	@Override
-	public void createProduct() {
+	public GenericProductDto createProduct(GenericProductDto genericProductDto) {
 		// TODO Auto-generated method stub
+		RestTemplate restTemplate = restTemplateBuilder.build();
+		ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.postForEntity(genericProductUrl, genericProductDto, FakeStoreProductDto.class);
+		
+		return this.convertToGenericProductDto(responseEntity.getBody());
 		
 	}
 
