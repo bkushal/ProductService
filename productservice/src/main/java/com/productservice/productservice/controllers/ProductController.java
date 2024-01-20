@@ -3,7 +3,10 @@ package com.productservice.productservice.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.productservice.productservice.dtos.ExceptionDto;
 import com.productservice.productservice.dtos.FakeStoreProductDto;
 import com.productservice.productservice.dtos.GenericProductDto;
+import com.productservice.productservice.exceptions.ProductNotFoundException;
 import com.productservice.productservice.services.FakeStoreProductService;
 import com.productservice.productservice.services.ProductService;
 
@@ -26,7 +31,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{id}")
-	public GenericProductDto getProductById(@PathVariable("id") Long id){
+	public GenericProductDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException{
 		return this.productService.getProductById(id);
 	}
 	
@@ -48,4 +53,13 @@ public class ProductController {
 	public void updateProductById() {
 		
 	}
+	
+	/*@ExceptionHandler(ProductNotFoundException.class)
+	private ResponseEntity<ExceptionDto> handleProductNotFoundException(ProductNotFoundException exception) {
+		//ResponseEntity<ExceptionDto> response = new ResponseEntity<ExceptionDto>();
+		ExceptionDto exceptionDto = new ExceptionDto();
+		exceptionDto.setMessage(exception.getMessage());
+		exceptionDto.setHttpStatus(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<ExceptionDto>(exceptionDto, HttpStatus.NOT_FOUND);
+	}*/
 }
