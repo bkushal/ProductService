@@ -32,7 +32,7 @@ public class FakeStoreClientAdapter {
 			@Value("${fakestore.api.paths.products}") String pathForProducts){
 		
 		this.restTemplateBuilder = restTemplateBuilder;
-		this.specificProductUrl = specificProductUrl = fakeStoreUrl+pathForProducts+ "/{id}";;
+		this.specificProductUrl = fakeStoreUrl+pathForProducts+ "/{id}";
 		this.genericProductUrl = fakeStoreUrl+pathForProducts;
 	}
 
